@@ -5,7 +5,7 @@ They only have an ephemeral relation to one another: they are all written by me,
 
 A description of each one is provided below, in alphabetical order
 ##getpaper
-For a complete description, see [my hompage](http://www.cns.s.u-tokyo.ac.jp/~daid/hack/getpaper.html)
+For a complete description, see [my hompage](http://www.cns.s.u-tokyo.ac.jp/~daid/hack/getpaper.html).
 
 Download, add bibtex, query bibtex, strip propaganda, print, and/or open papers based on reference!
 
@@ -30,7 +30,9 @@ If you didn't have subscription access, perhaps because you are at home or trave
 **And it will do all that, with a simple, single command.**  That could save you at least sixty seconds doing it yourself!
 
 What it will **not** do:
-* Harvest papers blindly.  You need to feed it the relevant Journal/Volume/Page information yourself.  This is to comply with the online journals' TOS.  It keeps you from clicking the mouse, not from ever connecting to the internet ever again.
+* Harvest papers blindly.  You need to feed it the relevant Journal/Volume/Page information yourself.  This is to comply with the online journals' TOS.  It keeps you from clicking the mouse, not from connecting to the internet ever again by downloading the Library of Alexandria.
+
+You probably want to be using [JabRef](http://jabref.sourceforge.net/) to manage your library.bib file.  It's awesome...
 
 ##mplall
 Loops over media files.  A low overhead, no-nonsense, single command to pilot mplayer or mplayer2.  I use it every day.
@@ -44,3 +46,6 @@ vi last or vi log.  If you often find yourself doing something like `ls -altr` t
 vi which, an easy way to open anything in your path, like a shell script.  It's faster than typing `vi $(which blah)` to type `viw blah`.
 
 Improves your ability to read binary or hex in a text editor...
+
+##xscreensaver_toggle
+I'm going to guess the name says it all.  It will toggle xscreensaver from single mode to off mode.  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least someone's using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
