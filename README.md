@@ -30,7 +30,7 @@ If you didn't have subscription access, perhaps because you are at home or trave
 **And it will do all that, with a simple, single command.**  That could save you at least sixty seconds doing it yourself!
 
 What it will **not** do:
-* Harvest papers blindly.  You need to feed it the relevant Journal/Volume/Page information yourself.  This is to comply with the online journals' TOS.  It keeps you from clicking the mouse, not from connecting to the internet ever again by downloading the Library of Alexandria.
+* Harvest papers blindly.  You need to feed it the relevant Journal/Volume/Page information yourself.  This is to comply with the online journals' TOS.  It keeps you from clicking the mouse, not from never connecting to the internet ever again by downloading the Library of Alexandria.
 
 You probably want to be using [JabRef](http://jabref.sourceforge.net/) to manage your library.bib file.  It's awesome...
 
