@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# open the last modified file in pwd with default editor
+# 10 Apr 2012 15:01:10
+# 02 Aug 2012 04:19:06
+# 26 Jun 2014 10:27:08 
+# daid
+
+# future work: would open binary or hex stuff (which is dumb)
+
+if [ ! "$EDITOR" ];then
+	echo "Please set the EDITOR environment variable"
+	exit
+fi
+
+FILE=$(pwd)
+i=2
+while [ -d "$FILE" ]
+do
+  LS=$(ls -lt $(pwd)| head -n "$i" | tail -n 1)
+  FILE=$(echo $LS | awk '{printf $9}')
+  if [ -d "$FILE" ];then
+    let "i += 1" 
+    continue
+  fi
+  read -p "Edit file: $LS? " -n 1 -r 
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    break
+  fi
+  let "i += 1" 
+  FILE=$(pwd) # ugly hack to while condition
+  continue
+done
+
+"$EDITOR" $* "$FILE"

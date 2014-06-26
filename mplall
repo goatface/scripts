@@ -1,0 +1,72 @@
+#!/bin/bash
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+#                    Version 2, December 2004
+#
+# Copyright (C) 2010-2014  daid kahl <daidxor@gmail.com>
+#
+# Everyone is permitted to copy and distribute verbatim or modified
+# copies of this license document, and changing it is allowed as long
+# as the name is changed.
+#
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+#
+#  0. You just DO WHAT THE FUCK YOU WANT TO.
+#
+#
+# Name: mplall v 0.1
+# Does: loops mplayer on media files
+# Last updated: 27 Jun 2014 04:56:47  
+VERSION=0.1
+
+#TO DO: catch PID of find to put on a control_c trap
+
+function Usage () {
+cat <<-ENDOFMESSAGE
+mplall version $VERSION
+Recursively find and play media files starting from the present directory
+Video is full-screened, audio is gapless.
+
+Usage $0: [-R]
+
+options:
+   -R		: Generate random playlist
+ENDOFMESSAGE
+    exit 1
+}
+
+# Set appropriate mplayer or die
+if ( which mplayer2 &>/dev/null );then
+	MPLAYER="mplayer2 --gapless-audio"
+elif ( which mplayer &>/dev/null );then
+	MPLAYER="mplayer"
+	echo "gapless audio disabled, install mplayer2 to enable: http://www.mplayer2.org/"
+else
+	printf "mplall requires mplayer or mplayer2, but it's not in your PATH or not installed.\n\t(see http://www.mplayerhq.hu or http://www.mplayer2.org/)\nAborting.\n" >&2; exit 1; 
+fi
+
+Rflag=""
+while getopts 'R' OPTION
+do
+  case $OPTION in
+  R)    Rflag=1;;
+  *)    Usage ;;
+  esac
+done
+  
+if [ `pwd` = "$HOME" ];then
+read -p  "Really recursively search all files for media in $HOME? (y/n): " -n 1 -r
+echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    continue
+  else
+    exit
+  fi
+fi
+
+if [ "$Rflag" ];then
+	echo "mplall generating random playlist..."
+fi
+
+$MPLAYER -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.wav|\.wmv)' | sort $* )
+

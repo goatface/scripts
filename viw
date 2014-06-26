@@ -1,0 +1,8 @@
+#!/bin/bash
+# vi which, quickly edit scripts in your PATH
+# daid
+if [ ! "$EDITOR" ];then
+	echo "Please set the EDITOR environment variable"
+	exit
+fi
+$EDITOR `which $1` 
