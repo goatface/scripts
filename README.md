@@ -34,6 +34,13 @@ What it will **not** do:
 
 You probably want to be using [JabRef](http://jabref.sourceforge.net/) to manage your library.bib file.  It's awesome...
 
+##mkdbjail
+Makes a chroot jail ('sandbox') for DropBox.
+
+It's designed for Gentoo, but probably could work fairly easily on most GNU/Linux systems.  I'm not personally a huge fan of DropBox, but I've been known to use it from time to time when my own server is being pesky.  I'm also not a fan of proprietary software.  Secret proprietary software whose main function is to manipulate my personal files sounds really dangerous to me.  As a result, I stick it into a chroot jail so that, almost no matter what they have going on inside that black box, all that can happen is to bork its own playground.
+
+Definitely not what I'd call _one of my favorite shell scripts_ since I don't use it too often.  But the wiki page was not only fairly erroneous before I made this, but so tedius mostly with commands to copy-and-paste.  I recently re-installed my distro, so I'll be doing this again at some point, whence I will take a look at this, update, and possibly improve it.  I think it was literally living only on the Discussion page on the Gentoo wiki, so it might get a larger audience here.
+
 ##mplall
 Loops over media files, kind of like `cp -r *` if you could do `mplayer -r *`.  A low overhead, no-nonsense, single command to pilot mplayer or mplayer2.  I use it every day.
 
@@ -54,4 +61,4 @@ Improves your ability to read binary or hex in a text editor...
 ##xscreensaver_toggle
 I'm going to guess the name says it all.  In case you can't immediately get the point of this one...
 
-`xscreensaver_toggle` will toggle xscreensaver from single mode to off mode (or vice versa).  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least _someone's_ using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
+`xscreensaver_toggle` will toggle xscreensaver from single mode to off mode (or vice versa).  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least _someone's_ using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!

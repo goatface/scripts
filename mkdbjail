@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# Creates a jail environment for dropbox,
+# sets up DropBox, and gets it ready to go!
+
+# daid 2012.1.17
+# following along, scripting, and correcting:
+# http://en.gentoo-wiki.com/wiki/Jail_Dropbox
+
+# variables used, change as necessary
+CHROOT="/var/chroot/dropbox"
+DBURL="http://www.getdropbox.com/download?plat=lnx.x86"
+# This will get 2.6, 2.7 and so on
+PYTHONV=`eselect python list | grep "python2." | sed 's/.*python//' | sed 's/\ .*//'`
+
+# Dep check
+type -P wget &>/dev/null || { printf "mkdbjail requires wget but it's not in your PATH or not installed.\n\tPlease run: emerge wget\nAborting.\n" >&2; exit 1; }
+type -P jail &>/dev/null || { printf "mkdbjail requires jail but it's not in your PATH or not installed.\n\tPlease run: emerge jail\nAborting.\n" >&2; exit 1; }
+
+# need to make the /var/chroot (or similar directory) but enough hacking for today
+
+mkjailenv $CHROOT
+
+cd $CHROOT
+
+addjailuser $CHROOT /home/dropbox /bin/bash dropbox
+
+addjailsw $CHROOT
+addjailsw $CHROOT -P bash "--version"
+addjailsw $CHROOT -P readlink "--help"
+addjailsw $CHROOT -P dirname "--help"
+
+# The basic libraries required
+echo "Copying basic libraries..."
+cp -vp /lib/ld-linux.so.2 $CHROOT/lib/
+cp -vp /lib/libgcc_s.so.1 $CHROOT/lib/
+cp -vp /usr/lib/libgtk-x11-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgdk-x11-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libatk-1.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgdk_pixbuf-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libfontconfig.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXext.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXrender.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXinerama.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXi.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXrandr.so.2 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXcursor.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXcomposite.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXdamage.so.1 $CHROOT/usr/lib/
+cp -vp /usr/lib/libpango-1.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libX11.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXfixes.so.3 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgobject-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgmodule-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgthread-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libglib-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libSM.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libpangocairo-1.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libcairo.so.2 $CHROOT/usr/lib/
+cp -vp /usr/lib/libpixman-1.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXau.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libXdmcp.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libgio-2.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libpangoft2-1.0.so.0 $CHROOT/usr/lib/
+cp -vp /usr/lib/libfreetype.so.6 $CHROOT/usr/lib/
+cp -vp /usr/lib/libICE.so.6 $CHROOT/usr/lib/
+cp -vp /lib/libuuid.so.1 $CHROOT/lib/
+cp -vp /lib/libresolv.so.2 $CHROOT/lib/
+
+# Copy python modules and includes (do we really need ALL of them?!)
+echo "Copying python modules..."
+cp -aRv /usr/lib/python$PYTHONV $CHROOT/usr/lib/
+echo "Copying python includes..."
+cp -aRv /usr/include/python$PYTHONV $CHROOT/usr/include/
+
+# Get fonts so things don't look ugly
+echo "Setting up fonts..."
+cp -vRp /usr/share/fonts/ $CHROOT/usr/share/fonts/
+mkdir -v $CHROOT/etc/fonts/
+cp -vp /etc/fonts/fonts.conf $CHROOT/etc/fonts/
+
+# to resolve DNS names
+echo "Adding DNS resolution..."
+cp -av /lib/libnss_dns* $CHROOT/lib/
+cp -vp /lib/libcom_err.so.2 $CHROOT/lib/
+cp -vp /lib/libz.so.1 $CHROOT/lib/
+
+# We will need to copy this file any time our internet connection changes!
+cp -vp /etc/resolv.conf $CHROOT/etc/
+
+# We will need to actually work as this jailed user, so
+# we want a nicer looking and functional shell as per:
+# http://en.gentoo-wiki.com/wiki/Jail
+echo "Making a pretty and functional shell..."
+mkdir $CHROOT/etc/bash/
+cp -vp /etc/bash/bashrc $CHROOT/etc/bash/
+cp -vp /etc/profile $CHROOT/etc/
+cp -vp /etc/DIR_COLORS $CHROOT/etc/
+addjailsw $CHROOT -P whoami
+
+# Create dropbox user home directory
+echo "Creating DropBox home..."
+mkdir -p $CHROOT/home/dropbox
+
+# Ensure permissions are correct
+# (Is it really necessary?  We preserved file permissions in the above steps...)
+echo "Ensuring correct permissions..."
+chmod -R 755 $CHROOT
+if cd $CHROOT; then
+ for i in bin dev etc home usr var; do
+  find "$i" -type d -exec chmod 755 {} \;
+ done
+else
+ echo "Could not change directory to $CHROOT, aborting."
+fi
+if cd $CHROOT/etc; then
+ chmod 644 passwd profile resolv.conf DIR_COLORS
+ find bash/ -type f -exec chmod 644 {} \;
+else
+ echo "Could not change directory to $CHROOT/etc, aborting."
+fi
+
+cd $CHROOT
+
+# Download dropbox
+echo "Downloading DropBox..."
+wget -O $CHROOT/home/dropbox/dropbox.tar.gz $DBURL
+
+echo "Extracting DropBox..."
+tar xvf $CHROOT/home/dropbox/dropbox.tar.gz -C $CHROOT/home/dropbox/
+
+# Gentoo Wiki order on this next step was wrong
+# DropBox cannot find these python shared objects in the correct location
+echo "Fixing some Python shared objects..."
+cp -av /usr/lib/python$PYTHONV/lib-dynload/_sha.so $CHROOT/home/dropbox/.dropbox-dist/
+cp -av /usr/lib/python$PYTHONV/lib-dynload/_md5.so $CHROOT/home/dropbox/.dropbox-dist/
+
+echo "Ensuring correct permissions of the DropBox base system..."
+chown dropbox:users -R $CHROOT/home/dropbox/.dropbox-dist/
+
+if [ ! -d "$CHROOT/home/dropbox/Dropbox" ];then
+	mkdir $CHROOT/home/dropbox/Dropbox
+	echo "Created DropBox: $CHROOT/home/dropbox/Dropbox"
+	echo "Please symlink this from your home directory (or whereever)"
+	chown dropbox:users $CHROOT/home/dropbox/Dropbox
+fi
+
+mkdir $CHROOT/proc
+
+echo "All done!"
+echo "Please run the following commands to begin:"
+printf "\tmount -t proc none $CHROOT/proc\n"
+printf "\tmount -o bind /dev $CHROOT/dev\n"
+printf "\tsu dropbox\n"
+printf "\tcd .dropbox-dist\n
+printf "\t./dropboxd\n"
