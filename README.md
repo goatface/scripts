@@ -42,7 +42,9 @@ It loops forever, does full screen on video, can do alphabetic or random playlis
 Also, if you want to view nefarious files with more subterfuge, the only history that you did will be `cd` commands in your shell history!
 
 ##vil
-`vil` functionally means _vi last_  (or _vi log_ in practice).  If you often find yourself doing something like `ls -altr` to see recently modified files to open one in a text editor, this is for you.  Who wants to remember the name of recent log files, anyway?  Starting from the most recently modified, `vil` keeps asking if you want to open that file, cycling to the next, until you agree or kill it.
+`vil` functionally means _vi last_  (or _vi log_ in practice).  
+
+If you often find yourself doing something like `ls -altr` to see recently modified files to open one in a text editor, this is for you.  Who wants to remember the name of recent log files, anyway?  Starting from the most recently modified, `vil` keeps asking if you want to open that file, cycling to the next, until you agree or kill it.
 
 ##viw
 `viw` stands for _vi which_, an easy way to open anything in your path, like a shell script.  It's faster than typing `vi $(which blah)` to type `viw blah`.
@@ -52,4 +54,4 @@ Improves your ability to read binary or hex in a text editor...
 ##xscreensaver_toggle
 I'm going to guess the name says it all.  In case you can't immediately get the point of this one...
 
-`xscreensaver_toggle` will toggle xscreensaver from single mode to off mode.  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least _someone's_ using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
+`xscreensaver_toggle` will toggle xscreensaver from single mode to off mode (or vice versa).  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least _someone's_ using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
