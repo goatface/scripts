@@ -35,17 +35,21 @@ What it will **not** do:
 You probably want to be using [JabRef](http://jabref.sourceforge.net/) to manage your library.bib file.  It's awesome...
 
 ##mplall
-Loops over media files.  A low overhead, no-nonsense, single command to pilot mplayer or mplayer2.  I use it every day.
+Loops over media files, kind of like `cp -r *` if you could do `mplayer -r *`.  A low overhead, no-nonsense, single command to pilot mplayer or mplayer2.  I use it every day.
 
 It loops forever, does full screen on video, can do alphabetic or random playlists starting from the present directory.  I never need more than this.  Probably you want your media organized by directories (Album/Arist/01. Song) and not a giant torrent dump with thousands of files in one directory.
 
+Also, if you want to view nefarious files with more subterfuge, the only history that you did will be `cd` commands in your shell history!
+
 ##vil
-vi last or vi log.  If you often find yourself doing something like `ls -altr` to see recently modified files to open one in a text editor, this is for you.  Who wants to remember the name of recent log files, anyway?  Starting from the most recently modified, `vil` keeps asking if you want to open that file, cycling to the next, until you agree or kill it.
+`vil` functionally means _vi last_  (or _vi log_ in practice).  If you often find yourself doing something like `ls -altr` to see recently modified files to open one in a text editor, this is for you.  Who wants to remember the name of recent log files, anyway?  Starting from the most recently modified, `vil` keeps asking if you want to open that file, cycling to the next, until you agree or kill it.
 
 ##viw
-vi which, an easy way to open anything in your path, like a shell script.  It's faster than typing `vi $(which blah)` to type `viw blah`.
+`viw` stands for _vi which_, an easy way to open anything in your path, like a shell script.  It's faster than typing `vi $(which blah)` to type `viw blah`.
 
 Improves your ability to read binary or hex in a text editor...
 
 ##xscreensaver_toggle
-I'm going to guess the name says it all.  It will toggle xscreensaver from single mode to off mode.  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least someone's using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
+I'm going to guess the name says it all.  In case you can't immediately get the point of this one...
+
+`xscreensaver_toggle` will toggle xscreensaver from single mode to off mode.  This is because different pieces of software on GNU/Linux don't always play nice with each other.  Sure, if you're using [xine's UI](https://www.xine-project.org) unbeknownst to you it makes use of phantom Scroll Lock key presses to keep the movie visible (hey, at least _someone's_ using that key).  But if you're like me and usually using mplayer, there's really no good solution I've found, including heartbeat signals, to properly disable the screen saver.  And I get really sick of opening up the Demo tool all the time.  So, with this script, make a key shortcut and it will easily toggle your screen saver and inform you!.
