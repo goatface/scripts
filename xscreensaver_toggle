@@ -1,0 +1,16 @@
+#!/bin/bash
+#27 Jun 2014 00:00:26
+#daid
+#easily toggles xscreensaver from one to off for watching movies
+
+RCFILE="$HOME/.xscreensaver"
+
+if ( grep -q "mode:		off" $RCFILE ); then
+	echo "Screen saver off...turning on"
+	zenity --info --text "xscreensaver on"
+	sed -i 's/mode:		off/mode:		one/' "$RCFILE" 
+elif ( grep -q "mode:		one" $RCFILE ); then
+	echo "Screen saver on...turning off"
+	zenity --info --text "xscreensaver off"
+	sed -i 's/mode:		one/mode:		off/' "$RCFILE"
+fi
