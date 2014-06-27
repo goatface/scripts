@@ -35,11 +35,23 @@ What it will **not** do:
 You probably want to be using [JabRef](http://jabref.sourceforge.net/) to manage your library.bib file.  It's awesome...
 
 ##mkdbjail
-Makes a chroot jail ('sandbox') for DropBox.
+Makes a chroot jail ('sandbox') for DropBox.  **It is assumed to be run by root or sudo.**
 
 It's designed for Gentoo, but probably could work fairly easily on most GNU/Linux systems.  I'm not personally a huge fan of DropBox, but I've been known to use it from time to time when my own server is being pesky.  I'm also not a fan of proprietary software.  Secret proprietary software whose main function is to manipulate my personal files sounds really dangerous to me.  As a result, I stick it into a chroot jail so that, almost no matter what they have going on inside that black box, all that can happen is to bork its own playground.
 
 Definitely not what I'd call _one of my favorite shell scripts_ since I don't use it too often.  But the wiki page was not only fairly erroneous before I made this, but so tedius mostly with commands to copy-and-paste.  I recently re-installed my distro, so I'll be doing this again at some point, whence I will take a look at this, update, and possibly improve it.  I think it was literally living only on the Discussion page on the Gentoo wiki, so it might get a larger audience here.
+
+What the script does **not** do:
+- install jail (but it had depcheck)
+- useradd (simple enough anyway, and I don't want a script that makes users on someone's machine)
+- Make the handy little dropbox shell script to cd .dropbox-dist && ./dropboxd
+(Need to move dropboxd script to this repo...please wait!)
+Otherwise it should do everything else. 
+
+There could be like one permission mistake or something.  
+It is only for 32-bit since I have no 64-bit system to test on. Please change the environment variables at the top to suit you 
+
+The verbosity of output could be truncated, or in the best case done with tee or something into a log file. 
 
 ##mplall
 Loops over media files, kind of like `cp -r *` if you could do `mplayer -r *`.  A low overhead, no-nonsense, single command to pilot mplayer or mplayer2.  I use it every day.
