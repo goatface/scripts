@@ -618,16 +618,28 @@ function DownloadPdf () {
 		#	But we cannot switch default to elinks because of it's lack of -base option
 		#	However, the lynx -base option is only required for HREFTYPE non-zero
 		#	In other words, a terrible hack JUST for ScienceDirect yet again...
-		if [[ $Rflag -eq 0 || "$HREFTYPE" -ne 0 ]];then # If it's isn't both Remote and ScienceDirect, do...
-			lynx -base -source -connect_timeout=20 "$ADSLINK" > $TMPURL
-			#read_timeout is a newer feature many systems don't seem to have...added to lynx 2.8.7 2009.7.5
-			#lynx -base -source -read_timeout=20 "$ADSLINK" >$TMPURL 
+		
+		#if [[ $Rflag -eq 0 || "$HREFTYPE" -ne 0 ]];then # If it's isn't both Remote and ScienceDirect, do...
+		#	lynx -base -source -connect_timeout=20 "$ADSLINK" > $TMPURL
+		#	#read_timeout is a newer feature many systems don't seem to have...added to lynx 2.8.7 2009.7.5
+		#	#lynx -base -source -read_timeout=20 "$ADSLINK" >$TMPURL 
 		# I think these things are not used? 07 May 2012 18:24:42 
-		elif [[ "$Rflag" && "$HREFTYPE" -eq 0 ]]; then # If it IS Remote AND ScienceDirect...
-			# the remote shell will be confused by & in a URL, so we need to make it a literal
-			ADSLINK=`echo $ADSLINK | sed 's/\&/\\\&/g'`
-			echo "Science Direct hack"
-			ssh "$USER@$HOST" elinks -source "$ADSLINK" > $TMPURL
+		#elif [[ "$Rflag" && "$HREFTYPE" -eq 0 ]]; then # If it IS Remote AND ScienceDirect...
+		#	# the remote shell will be confused by & in a URL, so we need to make it a literal
+		#	ADSLINK=`echo $ADSLINK | sed 's/\&/\\\&/g'`
+		#	echo "Science Direct hack"
+		#	ssh "$USER@$HOST" elinks -source "$ADSLINK" > $TMPURL
+		
+
+		#	A *new* problem from SD 28 Jun 2014 07:15:44 
+		#	They use JavaScript to generate a redirect, since command-line browsers cannot do JS
+		#	Once we get the source from ADS, we can nab the redirect URL from a lynx source dump
+		#       Then, magically, a slight hack on the original way works again
+		if [ "$SD" ];then
+			lynx -source -connect_timeout=20 "$ADSLINK" > $TMPURL
+			TMPURL2=$(grep 'name="redirectURL"' $TMPURL | sed 's/.*value="//' | sed 's/".*//')
+			lynx -source "$TMPURL2" > $TMPURL
+			echo "Science (in)Direct hack"
 		elif [[ "$Rflag" && "$AIP" ]]; then # If it IS Remote AND AIP
 			# the remote shell will be confused by & in a URL, so we need to make it a literal
 			ADSLINK=`echo $ADSLINK | sed 's/\&/\\\&/g'`
@@ -642,9 +654,10 @@ function DownloadPdf () {
 			#emulate 2g as sed, where goat is regex: sed ':a;s/\([^ ]*goat.*[^\\]\)goat\(.*\)/\1replace\2/;ta'
 			# the following is no longer valid daid 05 Mar 2011 03:47:48 
 			#LOCALPDF=`grep PDF $TMPURL | sed ':a;s/\([^ ]*[Hh][Rr][Ee][Ff].*[^\\]\)[Hh][Rr][Ee][Ff]\(.*\)/\1\2/;ta' | sed  's/.*[Hh][Rr][Ee][Ff]=\"//' | sed 's/\".*//' | grep "origin=search" | head -n 1`
-			# this will get us the right URL, but wget has a hard time following it from some 404 issues, so we just use lynx instead
+			# this will get us the right URL; at one point we had to script lynx from wget 404, but now wget works again 
 			LOCALPDF=`grep pdfurl $TMPURL | \
-				head -n 1 | sed 's/pdfurl=\"//' | sed 's/\".*//'`
+				head -n 1 | sed 's/.*pdfurl=\"//' | sed 's/\".*//'`
+				#head -n 1 | sed 's/pdfurl=\"//' | sed 's/\".*//'` # old one 28 Jun 2014 07:35:47, SD needs me to throw away leading
 				# another old style for SD 16 Jan 2012 21:19:49 
 				#sed ':a;s/\([^ ]*[Hh][Rr][Ee][Ff].*[^\\]\)[Hh][Rr][Ee][Ff]\(.*\)/\1\2/;ta' | \
 				#sed  's/.*[Hh][Rr][Ee][Ff]=\"//' | sed 's/\".*//'`
@@ -699,7 +712,8 @@ function DownloadPdf () {
 			FULLPATH=`echo $FULLPATH | sed 's/\&/\\\&/g'`
 			#echo "ssh "$USER@$HOST" wget -U 'Mozilla/5.0' -O $TMP/$FILENAME $FULLPATH" # works
 			# first test of AIP workaround -- seems to work!
-			if [[ "$AIP" || "$SD" ]]; then
+			#if [[ "$AIP" || "$SD" ]]; then # SD reverts to the old style now?! 28 Jun 2014 07:50:40 
+			if [[ "$AIP" ]]; then
 				MakeLynxCmd
 				echo "Copying lynx command to the ssh host..."
 				scp "$LYNXCMD" "$USER@$HOST:$LYNXCMD"
@@ -722,7 +736,8 @@ function DownloadPdf () {
 			#"$WGET -U 'Mozilla/5.0' $FULLPATH -O$TMP/$FILENAME"
 		else # Remote flag is off
 			# first test of AIP workaround -- seems to work!
-			if [[ "$AIP" || "$SD" ]]; then
+			#if [[ "$AIP" || "$SD" ]]; then
+			if [[ "$AIP" ]]; then # SD reverts to the old style now?! 28 Jun 2014 07:51:03 
 				MakeLynxCmd
 				lynx -accept_all_cookies -cmd_script="$LYNXCMD" "$ADSLINK"
 			else
