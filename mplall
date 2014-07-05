@@ -53,8 +53,8 @@ do
   *)    Usage ;;
   esac
 done
-  
-if [ `pwd` = "$HOME" ];then
+PWD=$(pwd)  
+if [ "$PWD" = "$HOME" ];then
 read -p  "Really recursively search all files for media in $HOME? (y/n): " -n 1 -r
 echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
