@@ -148,6 +148,9 @@ function GetOpts() {
 	    opt=$1
 	    shift
 	    case ${opt} in
+	        -b|--bibtex)
+	    	bflag=1
+	            ;;
 	        -q|--query)
 	    	qflag=1
 	            ;;
@@ -640,10 +643,12 @@ function DownloadPdf () {
 			TMPURL2=$(grep 'name="redirectURL"' $TMPURL | sed 's/.*value="//' | sed 's/".*//')
 			lynx -source "$TMPURL2" > $TMPURL
 			echo "Science (in)Direct hack"
-		elif [[ "$Rflag" && "$AIP" ]]; then # If it IS Remote AND AIP
+		#elif [[ "$Rflag" && "$AIP" ]]; then # If it IS Remote AND AIP
+			# I think we don't need this anymore 04 Dec 2014 17:10:26 
 			# the remote shell will be confused by & in a URL, so we need to make it a literal
-			ADSLINK=`echo $ADSLINK | sed 's/\&/\\\&/g'`
-			ssh "$USER@$HOST" elinks -source "$ADSLINK" > $TMPURL
+			#ADSLINK=`echo $ADSLINK | sed 's/\&/\\\&/g'`
+			#ssh "$USER@$HOST" elinks -source "$ADSLINK" > $TMPURL
+			#echo "Debugging..."
 		fi
 		if [ $HREFTYPE -eq 0 ];then
 			#full paths given for href
@@ -669,7 +674,7 @@ function DownloadPdf () {
 				sed  's/.*[Hh][Rr][Ee][Ff]=\"//' | sed 's/\".*//' | head -n 1`
 			fi
 		fi
-		if [ $HREFTYPE -eq 1 ];then
+		if [[ $HREFTYPE -eq 1 && $AIP -eq 0 ]];then # we should really make a flag for if wget is used...we don't need this if we use lynx
 			#domain omitted for href
 			BASEURL=`head -n 1 $TMPURL | sed 's/.*X-URL:\ //'|  sed 's,\(http://[^/]*\)/.*,\1,'`
 			LOCALPDF=`grep PDF $TMPURL | \
@@ -759,7 +764,9 @@ function AddBibtex () {
 	do
 		if ( echo $line | grep "adsurl = " > /dev/null );then
 			echo "$line" >> "$BIBFILE"
-			echo "file = {:$LIBPATH/$PAPERTYPE/$YEAR/$FILENAME:PDF}," >> "$BIBFILE"
+			if [ -z $bflag ];then # Only do these things without the c(heck) flag and b(ibtex) flag
+				echo "file = {:$LIBPATH/$PAPERTYPE/$YEAR/$FILENAME:PDF}," >> "$BIBFILE"
+			fi
 		        echo "comment = {$COMMENTS}," >> "$BIBFILE"				    
 			#printf "$line\n" >> "$BIBFILE"
 			#printf "file = {:$LIBPATH/$PAPERTYPE/$YEAR/$FILENAME:PDF},\n" >> "$BIBFILE"
@@ -821,6 +828,7 @@ function ErrorReport() {
 # URL domain error, forbidden access of content, etc
 # Best to confirm the download item is a PDF file
 function IsPdfValid () { 
+	printf "Checking if PDF appears to be valid...\n"
 	if ( pdfinfo $TMP/$FILENAME 2>&1 | grep "Error: May not be a PDF file\|Syntax Warning: May not be a PDF file (continuing anyway)\|No such file or directory" > /dev/null );then
 		printf "Error in downloading the PDF\nMaybe you do not have access\nTerminating...\n"
 		printf "If you confirm the citation information, and the paper is also in ADS, check for a new version of getpaper:\n"
@@ -983,6 +991,7 @@ do
 	if [[ -z $qflag  && -z $bflag ]];then # Only do these things without the c(heck) flag and b(ibtex) flag
 		DownloadPdf
 		if [ "$Rval" ];then
+			#echo "Debugging scp..."
 			printf "scp'ing downloaded PDF from temporary location on remote server: "
 			scp "$USER@$HOST:/$TMP/$FILENAME" "$TMP/$FILENAME"
 			echo "Removing the tmp file on the ssh host..."
