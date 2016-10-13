@@ -14,10 +14,10 @@
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
 #
 #
-# Name: mplall v 0.11
+# Name: mplall v 0.12
 # Does: loops mplayer on media files
-# Last updated: 23 Dec 2014 21:51:29  
-VERSION=0.1
+# Last updated: 13 Oct 2016 16:03:51 
+VERSION=0.12
 
 #TO DO: catch PID of find to put on a control_c trap
 
@@ -27,10 +27,11 @@ mplall version $VERSION
 Recursively find and play media files starting from the present directory
 Video is full-screened, audio is gapless.
 
-Usage $0: [-R]
+Usage $0: [-R] [-D]
 
 options:
-   -R		: Generate random playlist
+   -D		: Play media on Desktop
+   -R		: Generate Random playlist
 ENDOFMESSAGE
     exit 1
 }
@@ -46,10 +47,17 @@ else
 fi
 
 Rflag=""
-while getopts 'R' OPTION
+Dflag=""
+while getopts 'RD' OPTION
 do
   case $OPTION in
-  R)    Rflag=1;;
+  R)    Rflag=1
+        RANDOMIZE="-R";;
+  D)    Dflag=1
+        which xwininfo &>/dev/null || { printf "mplall requires xwininfo for Desktop mode but it's not in your PATH or not installed.\n\t(see http://xorg.freedesktop.org/ )\nAborting.\n" >&2; exit 1; } 
+        DESKTOPID=$(xwininfo -name Desktop | grep Desktop | awk '{printf $4}')
+	WID="-wid $DESKTOPID"
+	;;
   *)    Usage ;;
   esac
 done
@@ -68,5 +76,6 @@ if [ "$Rflag" ];then
 	echo "mplall generating random playlist..."
 fi
 
-$MPLAYER -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $* )
+$MPLAYER $WID -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $RANDOMIZE )
+#$MPLAYER -wid 0x1000003 -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $* )
 
