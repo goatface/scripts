@@ -14,7 +14,7 @@
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
 #
 #
-# Name: mplall v 0.13
+# Name: mplall v 0.12
 # Does: loops mplayer on media files
 # Last updated: 21 Dec 2016 14:40:43 
 VERSION=0.13
@@ -45,6 +45,9 @@ elif ( which mplayer &>/dev/null );then
 else
 	printf "mplall requires mplayer or mplayer2, but it's not in your PATH or not installed.\n\t(see http://www.mplayerhq.hu or http://www.mplayer2.org/)\nAborting.\n" >&2; exit 1; 
 fi
+
+#hacks
+#MPLAYER="mplayer"
 
 Rflag=""
 Dflag=""
@@ -84,14 +87,18 @@ if [ "$Rflag" ];then
 fi
 
 if [[ -z "$FILENAME" ]];then
-  PLAYLIST="-playlist <(find -L "$PWD" -type f | \
-  egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | \
+  PLAYLIST="--playlist <(find -L "$PWD" -type f | \
+  egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.x|\.wav|\.wmv)' | \
   sort $RANDOMIZE )"
 else
   PLAYLIST="$FILENAME"
 fi 
 
-$MPLAYER $WID -fs -loop 0 -zoom "$PLAYLIST"
-#$MPLAYER $WID -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $RANDOMIZE )
+# TODO: What went wrong with the FILENAME version?
+#$MPLAYER $WID -fs -loop 0 -zoom -playlist "$PLAYLIST"
+#echo "$MPLAYER $WID --fs --loop 0 --zoom $PLAYLIST"
+#"$MPLAYER $WID --fs --loop 0 --zoom $PLAYLIST"
+
+$MPLAYER $WID -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.m4a|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $RANDOMIZE )
 #$MPLAYER -wid 0x1000003 -fs -loop 0 -zoom -playlist <(find -L "$PWD" -type f | egrep -i '(\.avi|\.flac|\.flv|\.mkv|\.mp3|\.mp4|\.mpeg|\.mpg|\.ogg|\.ogv|\.vob|\.wav|\.wmv)' | sort $* )
 
