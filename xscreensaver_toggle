@@ -7,10 +7,10 @@ RCFILE="$HOME/.xscreensaver"
 
 if ( grep -q "mode:		off" $RCFILE ); then
 	echo "Screen saver off...turning on"
-	zenity --info --text "xscreensaver on"
 	sed -i 's/mode:		off/mode:		one/' "$RCFILE" 
+	zenity --info --text "xscreensaver on"
 elif ( grep -q "mode:		one" $RCFILE ); then
 	echo "Screen saver on...turning off"
-	zenity --info --text "xscreensaver off"
 	sed -i 's/mode:		one/mode:		off/' "$RCFILE"
+	zenity --info --text "xscreensaver off"
 fi
